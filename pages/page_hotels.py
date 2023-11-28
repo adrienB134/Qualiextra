@@ -6,7 +6,7 @@ import seaborn as sns
 import numpy as np
 
 # Config
-st.set_page_config(page_title="GetAround Delay", page_icon="🚗 " layout="wide")
+st.set_page_config(page_title="GetAround Delay", page_icon="🚗 ", layout="wide")
 
 
 data = st.session_state.data
