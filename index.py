@@ -30,7 +30,7 @@ if __name__ == "__main__":
         data["extra_clean"] = data["extra"].apply(lambda x: x.split(" (")[0])
         data["periode_debut"] = data["date_debut"].dt.strftime("%m-%Y")
         data["periode_fin"] = data["date_fin"].dt.strftime("%m-%Y")
-        data["Annee"] = data["date_fin"].dt.year.astype(str)
+        data["Année"] = data["date_fin"].dt.year.astype(str)
         data["Mois"] = data["date_fin"].dt.to_period("M").astype(str)
         data["Semaine"] = data["date_fin"].dt.to_period("W-Mon").astype(str)
         data["marge"] = data.apply(lambda x: x["total HT"] - x["montant HT"], axis=1)

@@ -4,7 +4,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import numpy as np
 
-st.set_page_config(page_title="Qualiextra", page_icon="🏝️" layout="wide")
+st.set_page_config(page_title="Qualiextra", page_icon="🏝️", layout="wide")
 
 data = st.session_state.data
 
