@@ -11,7 +11,9 @@ with st.sidebar:
 ##computation
 
 fig = go.Figure()
-fig.add_trace(go.Histogram(x=data["periode_debut"], y=data["extra_clean"]))
+fig.add_trace(
+    go.Histogram(x=data["periode_debut"].sort_values(), y=data["extra_clean"])
+)
 fig.update_traces(dict(marker_line_width=0))
 
 ##main
