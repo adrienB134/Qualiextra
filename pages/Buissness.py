@@ -15,7 +15,6 @@ data = st.session_state.data
 data = data[data["statuts"] != "annulé"]
 data['Mois_WY'] = pd.DatetimeIndex(data['date_fin']).month
 data ['Marge_sur_CA'] = data.apply(lambda x: x["marge"] - x["total HT"], axis=1)
-data["Semaine_WY"] = data["date_fin"].dt.week.astype(str)
 data["Jour"] = data["date_fin"].dt.to_period("D").astype(str)
 mois_auj = datetime.datetime.now().strftime("%Y-%m")
 mois_année_précédente = datetime.datetime.now().replace(year=datetime.datetime.now().year - 1).strftime("%Y-%m")
