@@ -34,6 +34,7 @@ if __name__ == "__main__":
         data["Mois"] = data["date_fin"].dt.to_period("M").astype(str)
         data["Semaine"] = data["date_fin"].dt.to_period("W-Mon").astype(str)
         data["marge"] = data.apply(lambda x: x["total HT"] - x["montant HT"], axis=1)
+        data["mois"] = data["date_fin"].dt.strftime("%m")
         return data
 
     st.session_state.data = load_data()
