@@ -1,5 +1,7 @@
 import streamlit as st
 import pandas as pd
+from geopy.geocoders import BANFrance
+import plotly_express as px
 
 if __name__ == "__main__":
     st.set_page_config(
@@ -35,8 +37,59 @@ if __name__ == "__main__":
         data["Semaine"] = data["date_fin"].dt.to_period("W-Mon").astype(str)
         data["marge"] = data.apply(lambda x: x["total HT"] - x["montant HT"], axis=1)
         data["mois"] = data["date_fin"].dt.strftime("%m")
+
+        # data["Adresse"] = data["Propriété_clean"].apply(
+        #     lambda x: hotel[hotel["nom"] == x]["Adresse"].iloc[0]
+        # )
+        # data["latitude"] = data["Propriété_clean"].apply(
+        #     lambda x: hotel[hotel["nom"] == x]["latitude"].iloc[0]
+        # )
+        # data["longitude"] = data["Propriété_clean"].apply(
+        #     lambda x: hotel[hotel["nom"] == x]["longitude"].iloc[0]
+        # )
+
         return data
 
-    st.session_state.data = load_data()
 
-    st.write("# Welcome to Qualiextra! 👋")
+def geolocation(data):
+    info = pd.read_csv("./hotels.csv", sep=";")
+    info["Adresse"] = (
+        info["adresse"] + " " + info["code"].astype("str") + " " + info["ville"]
+    )
+    hotel = pd.DataFrame(data["Propriété_clean"].unique(), columns=["nom"])
+    hotel = pd.merge(hotel, info[["nom", "Adresse"]], on="nom", how="outer")
+    hotel["Adresse"] = hotel["Adresse"].fillna("Paris")
+    geolocator = BANFrance()
+    hotel["location"] = hotel["Adresse"].apply(geolocator.geocode)
+    hotel["latitude"] = hotel["location"].apply(
+        lambda loc: tuple(loc.point)[0] if loc else None
+    )
+    hotel["longitude"] = hotel["location"].apply(
+        lambda loc: tuple(loc.point)[1] if loc else None
+    )
+    # hotel["total_extras"] = (
+    #     data.groupby("Propriété_clean")["extra_clean"].unique().apply(lambda x: len(x))
+    # )
+    return hotel
+
+
+st.session_state.data = load_data()
+data = st.session_state.data
+
+hotel = geolocation(data)
+st.write("# Welcome to Qualiextra! 👋")
+
+fig = px.scatter_mapbox(
+    hotel,
+    lat="latitude",
+    lon="longitude",
+    mapbox_style="carto-positron",
+    zoom=10,
+    hover_name="nom",
+    hover_data=["Adresse"],
+    # size=data["hôtel"].value_counts(),
+)
+
+fig.update_layout(mapbox=dict())
+
+st.plotly_chart(fig)
