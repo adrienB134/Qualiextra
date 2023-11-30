@@ -48,6 +48,10 @@ if __name__ == "__main__":
         #     lambda x: hotel[hotel["nom"] == x]["longitude"].iloc[0]
         # )
 
+
+        data["Mois_WY"] = pd.DatetimeIndex(data["date_fin"]).month
+        data["Jour"] = data["date_fin"].dt.to_period("D").astype(str)
+
         return data
 
 
