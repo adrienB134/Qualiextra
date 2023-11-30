@@ -35,6 +35,8 @@ if __name__ == "__main__":
         data["Semaine"] = data["date_fin"].dt.to_period("W-Mon").astype(str)
         data["marge"] = data.apply(lambda x: x["total HT"] - x["montant HT"], axis=1)
         data["mois"] = data["date_fin"].dt.strftime("%m")
+        data["Mois_WY"] = pd.DatetimeIndex(data["date_fin"]).month
+        data["Jour"] = data["date_fin"].dt.to_period("D").astype(str)
         return data
 
     st.session_state.data = load_data()
