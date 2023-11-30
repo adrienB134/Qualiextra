@@ -1,0 +1,9 @@
+[theme]
+primaryColor="#100030"
+backgroundColor="#eeeeee"
+secondaryBackgroundColor="#BCA371"
+textColor="#100030"
+font="serif"
+
+[browser]
+serverAddress = '0.0.0.0'
