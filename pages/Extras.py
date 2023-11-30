@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 
-
+st.set_page_config(layout="wide")
 data = st.session_state.data
 data = data[data["statuts"] != "annulé"]
 
@@ -13,7 +13,7 @@ with st.sidebar:
     timeframe = st.radio("Timeframe", ["Année", "Mois", "Semaine"])
     ca_missions = st.radio("Classement", ["Chiffre d'affaire", "Missions"])
 
-##computation
+##Main
 col1, col2 = st.columns(2)
 top = col1.text_input("Nombre de rangs a afficher", 5)
 option = col2.selectbox("Période", (data[timeframe].unique()))
@@ -62,13 +62,13 @@ for period in data["Année"].unique():
             .groupby("mois")["extra_clean"]
             .unique()
             .apply(lambda x: len(x)),
+            mode="lines+markers+text",
+            textposition="top center",
+            textfont=dict(size=10),
         )
     )
 
-fig2 = px.density_heatmap(data, x="extra_clean", y="Propriété_clean")
-# fig.update_traces(dict(marker_line_width=0))
+fig.update_layout(xaxis_title="Mois", yaxis_title="Nombre d'extras uniques")
 
-##main
 
-st.plotly_chart(fig)
-st.plotly_chart(fig2)
+st.plotly_chart(fig, use_container_width=True)
