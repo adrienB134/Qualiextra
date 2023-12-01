@@ -5,10 +5,6 @@ import numpy as np
 import plotly.express as px
 
 
-st.set_page_config(page_title="Qualiextra", page_icon="🏝️", layout="wide")
-data = st.session_state.data
-
-
 @st.cache_data
 def load_data():
     data = pd.read_csv("./Missions.csv", sep=";")
@@ -50,9 +46,11 @@ st.header("Classements des extras sur la totalité de la période")
 ##Main
 col1, col2 = st.columns(2)
 top = col1.text_input("Nombre de rangs a afficher", 5)
-timeframe = col1.radio("Timeframe", ["Année", "Mois", "Semaine"],horizontal=True)
+timeframe = col1.radio("Timeframe", ["Année", "Mois", "Semaine"], horizontal=True)
 option = col2.selectbox("Période", (data[timeframe].unique()))
-ca_missions = col2.radio("Classement", ["Chiffre d'affaire", "Missions"], horizontal=True)
+ca_missions = col2.radio(
+    "Classement", ["Chiffre d'affaire", "Missions"], horizontal=True
+)
 df = data[data[timeframe] == option]
 
 if ca_missions == "Missions":
@@ -83,7 +81,7 @@ st.dataframe(df.iloc[0 : int(top), :], use_container_width=True)
 
 data2 = data.groupby(["mois", "Année"])["extra_clean"].nunique().reset_index()
 mask = data2["extra_clean"] != 0
-data2 = data2 [mask]
+data2 = data2[mask]
 
 st.header("Nombre d'extras par mois")
 
@@ -95,7 +93,6 @@ fig = px.line(
     text=data2["extra_clean"],
     labels={"extra_clean": "Nombre d'extras uniques", "mois": "Mois"},
     title=f"Nombre d'extras par mois",
-    
 )
 
 fig.update_layout(xaxis_title="Mois", yaxis_title="Nombre d'extras uniques")
