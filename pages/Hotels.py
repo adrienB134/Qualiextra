@@ -28,9 +28,27 @@ def load_data():
     data["Mois"] = data["date_fin"].dt.to_period("M").astype(str)
     data["Semaine"] = data["date_fin"].dt.to_period("W-Mon").astype(str)
     data["marge"] = data.apply(lambda x: x["total HT"] - x["montant HT"], axis=1)
-    data["mois"] = data["date_fin"].dt.strftime("%m")
+    data["mois"] = data["date_fin"].dt.strftime("%B")
     data["Jour"] = data["date_fin"].dt.to_period("D").astype(str)
     data["statuts"] = data["statuts"].fillna("standard")
+    data["mois"] = pd.Categorical(
+        data["mois"],
+        categories=[
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+        ],
+        ordered=True,
+    )
 
     return data
 
@@ -68,13 +86,13 @@ years = st.selectbox("Année", data["date_debut"].dt.year.astype(str).unique(), 
 
 by_year = data.loc[
     data["date_debut"].dt.year.astype(str) == years,
-    ["Propriété_clean", "periode_debut"],
+    ["Propriété_clean", "mois"],
 ]
 
 by_year["count"] = 1
 
 by_year = by_year.pivot_table(
-    index="periode_debut",
+    index="mois",
     values="count",
     columns=["Propriété_clean"],
     aggfunc="count",
@@ -84,12 +102,10 @@ by_year = by_year.pivot_table(
 top_hotels = by_year.sum().sort_values(ascending=False)[: int(top)].index.to_list()
 
 top_by_year = by_year.loc[:, top_hotels]
-top_by_year = pd.melt(
-    top_by_year.reset_index(), id_vars="periode_debut", value_name="Missions"
-)
+top_by_year = pd.melt(top_by_year.reset_index(), id_vars="mois", value_name="Missions")
 
 fig = px.line(
-    top_by_year, x="periode_debut", y="Missions", color="Propriété_clean", markers=True
+    top_by_year, x="mois", y="Missions", color="Propriété_clean", markers=True
 )
 fig.update_traces(hovertemplate=None)
 fig.update_layout(hovermode="x unified")
