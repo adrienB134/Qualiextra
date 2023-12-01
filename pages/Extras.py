@@ -28,9 +28,27 @@ def load_data():
     data["Mois"] = data["date_fin"].dt.to_period("M").astype(str)
     data["Semaine"] = data["date_fin"].dt.to_period("W-Mon").astype(str)
     data["marge"] = data.apply(lambda x: x["total HT"] - x["montant HT"], axis=1)
-    data["mois"] = data["date_fin"].dt.strftime("%m")
+    data["mois"] = data["date_fin"].dt.strftime("%B")
     data["Jour"] = data["date_fin"].dt.to_period("D").astype(str)
     data["statuts"] = data["statuts"].fillna("standard")
+    data["mois"] = pd.Categorical(
+            data["mois"],
+            categories=[
+                "January",
+                "February",
+                "March",
+                "April",
+                "May",
+                "June",
+                "July",
+                "August",
+                "September",
+                "October",
+                "November",
+                "December",
+            ],
+            ordered=True,
+        )
 
     return data
 
