@@ -22,6 +22,39 @@ if __name__ == "__main__":
         )["Propriété"]
         data["Propriété_clean"] = data["hôtel"].apply(lambda x: x.split(" (")[0])
 
+        data["extra_clean"] = data["extra"].apply(lambda x: x.split(" (")[0])
+        data["periode_debut"] = data["date_debut"].dt.strftime("%m-%Y")
+        data["periode_fin"] = data["date_fin"].dt.strftime("%m-%Y")
+        data["Année"] = data["date_fin"].dt.year.astype(str)
+        data["Mois"] = data["date_fin"].dt.to_period("M").astype(str)
+        data["Semaine"] = data["date_fin"].dt.to_period("W-Mon").astype(str)
+        data["marge"] = data.apply(lambda x: x["total HT"] - x["montant HT"], axis=1)
+        data["mois"] = data["date_fin"].dt.strftime("%B")
+        data["mois"] = pd.Categorical(data["mois"], 
+                                      categories=["January",
+                                                    "February", 
+                                                    "March", 
+                                                    "April", 
+                                                    "May", 
+                                                    "June",
+                                                    "July", 
+                                                    "August", 
+                                                    "September", 
+                                                    "October", 
+                                                    "November", 
+                                                    "December"], ordered=True)
+    
+        # data["Adresse"] = data["Propriété_clean"].apply(
+        #     lambda x: hotel[hotel["nom"] == x]["Adresse"].iloc[0]
+        # )
+        # data["latitude"] = data["Propriété_clean"].apply(
+        #     lambda x: hotel[hotel["nom"] == x]["latitude"].iloc[0]
+        # )
+        # data["longitude"] = data["Propriété_clean"].apply(
+        #     lambda x: hotel[hotel["nom"] == x]["longitude"].iloc[0]
+        # )
+        data["Jour"] = data["date_fin"].dt.to_period("D").astype(str)
+
         return data
 
 

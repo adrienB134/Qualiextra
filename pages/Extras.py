@@ -5,6 +5,10 @@ import numpy as np
 import plotly.express as px
 
 
+st.set_page_config(page_title="Qualiextra", page_icon="🏝️", layout="wide")
+data = st.session_state.data
+
+
 @st.cache_data
 def load_data():
     data = pd.read_csv("./Missions.csv", sep=";")
@@ -37,17 +41,18 @@ def load_data():
 
 st.set_page_config(page_title="Qualiextra", page_icon="🧑", layout="wide")
 data = load_data()
+
 data = data[data["statuts"] != "annulé"]
 
-##sidebar
-with st.sidebar:
-    timeframe = st.radio("Timeframe", ["Année", "Mois", "Semaine"])
-    ca_missions = st.radio("Classement", ["Chiffre d'affaire", "Missions"])
+
+st.header("Classements des extras sur la totalité de la période")
 
 ##Main
 col1, col2 = st.columns(2)
 top = col1.text_input("Nombre de rangs a afficher", 5)
+timeframe = col1.radio("Timeframe", ["Année", "Mois", "Semaine"],horizontal=True)
 option = col2.selectbox("Période", (data[timeframe].unique()))
+ca_missions = col2.radio("Classement", ["Chiffre d'affaire", "Missions"], horizontal=True)
 df = data[data[timeframe] == option]
 
 if ca_missions == "Missions":
@@ -76,30 +81,25 @@ else:
 st.dataframe(df.iloc[0 : int(top), :], use_container_width=True)
 
 
-fig = go.Figure(
-    layout=go.Layout(title=go.layout.Title(text="Nombre d'extras par mois"))
+data2 = data.groupby(["mois", "Année"])["extra_clean"].nunique().reset_index()
+mask = data2["extra_clean"] != 0
+data2 = data2 [mask]
+
+st.header("Nombre d'extras par mois")
+
+fig = px.line(
+    data2,
+    x="mois",
+    y="extra_clean",
+    color="Année",
+    text=data2["extra_clean"],
+    labels={"extra_clean": "Nombre d'extras uniques", "mois": "Mois"},
+    title=f"Nombre d'extras par mois",
+    
 )
 
-for period in data["Année"].unique():
-    fig.add_trace(
-        go.Scatter(
-            x=data[data["Année"] == period]["mois"].unique(),
-            y=data[data["Année"] == period]
-            .groupby("mois")["extra_clean"]
-            .unique()
-            .apply(lambda x: len(x)),
-            name=f"{period}",
-            text=data[data["Année"] == period]
-            .groupby("mois")["extra_clean"]
-            .unique()
-            .apply(lambda x: len(x)),
-            mode="lines+markers+text",
-            textposition="top center",
-            textfont=dict(size=10),
-        )
-    )
-
 fig.update_layout(xaxis_title="Mois", yaxis_title="Nombre d'extras uniques")
+fig.update_traces(textposition="bottom center")
 
 
 st.plotly_chart(fig, use_container_width=True)
