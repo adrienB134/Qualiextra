@@ -3,10 +3,12 @@ import pandas as pd
 from geopy.geocoders import BANFrance
 import plotly.express as px
 
+
 if __name__ == "__main__":
     st.set_page_config(
         page_title="Hello",
         page_icon="👋",
+        layout="wide",
     )
 
     @st.cache_data
@@ -39,9 +41,13 @@ def geolocation(data):
     hotel["longitude"] = hotel["location"].apply(
         lambda loc: tuple(loc.point)[1] if loc else None
     )
-    # hotel["total_extras"] = (
-    #     data.groupby("Propriété_clean")["extra_clean"].unique().apply(lambda x: len(x))
-    # )
+    hotel = pd.merge(
+        hotel,
+        data.groupby("Propriété_clean")["extra_clean"].count().to_frame(),
+        left_on="nom",
+        right_on="Propriété_clean",
+    )
+    hotel = hotel.rename(columns={"extra_clean": "Nombre de missions"})
     return hotel
 
 
@@ -55,12 +61,13 @@ fig = px.scatter_mapbox(
     lat="latitude",
     lon="longitude",
     mapbox_style="carto-positron",
-    zoom=10,
+    zoom=11,
     hover_name="nom",
     hover_data=["Adresse"],
-    # size=data["hôtel"].value_counts(),
+    height=800,
+    size="Nombre de missions",
 )
 
 fig.update_layout(mapbox=dict())
 
-st.plotly_chart(fig)
+st.plotly_chart(fig, use_container_width=True)
