@@ -66,7 +66,7 @@ marge_auj = sum(data[data["Mois"] == mois_auj]["marge"])
 marge_année_précédente = sum(data[data["Mois"] == mois_année_précédente]["marge"])
 
 
-st.title("Analyse chiffre d'affaires et de la marge Qualiextra")
+st.header("Analyse du chiffre d'affaires")
 
 
 col1, col2, col3 = st.columns(3)
@@ -86,17 +86,20 @@ col3.metric(
     f"Jusqu'à {max(data['date_fin']).strftime('%B %Y')}",
 )
 
-# Création du graphique à barres empilées avec Plotly Express
-data2 = data.groupby(["Mois_WY", "Année"])["total HT"].sum().reset_index()
+# Création du graphique en ligne pour chaque année
+data2 = data.groupby(["mois", "Année"])["total HT"].sum().reset_index()
+mask = data2["total HT"] != 0
+data2 = data2 [mask]
 
 fig = px.line(
     data2,
-    x="Mois_WY",
+    x="mois",
     y="total HT",
     color="Année",
     text=data2["total HT"].map(format_currency),
-    labels={"total HT": "CA", "Mois_WY": "Mois"},
+    labels={"total HT": "CA", "mois": "Mois"},
     title=f"Évolution du chiffre d'affaires par mois",
+    
 )
 
 # Mise en forme du graphique
@@ -106,6 +109,9 @@ fig.update_yaxes(title_text="Marge en k€")
 
 st.plotly_chart(fig, use_container_width=True)
 
+#Création d'un graphique pour le chiffre d'affaires et la marge selon une période indiquée
+
+st.header("Analyse du chiffre d'affaires et de la marge par période")
 
 periode = st.selectbox(
     "Sélectionnez la période",
@@ -217,17 +223,17 @@ with col1:
     fig.update_traces(textposition="top center")
 
     # Affichage du graphique avec Streamlit
-    st.plotly_chart(fig)
+    st.plotly_chart(fig, use_container_width=True)
 
 
 with col2:
     # Création du graphique à barres empilées avec Plotly Express
     data = data.groupby(granularité)[["marge", "montant HT"]].sum().reset_index()
     data["Marge_sur_CA"] = data.apply(
-        lambda x: x["marge"] / (x["montant HT"] + x["marge"]), axis=1
+        lambda x: x["marge"] *100 / (x["montant HT"] + x["marge"]), axis=1
     )
     data["Couts_sur_CA"] = data.apply(
-        lambda x: x["montant HT"] / (x["montant HT"] + x["marge"]), axis=1
+        lambda x: x["montant HT"] * 100 / (x["montant HT"] + x["marge"]), axis=1
     )
 
     fig = go.Figure()
@@ -253,9 +259,11 @@ with col2:
         barmode="relative",
         title_text="Relative Barmode",
         title=f"Évolution de la répartition du CA - {periode}",
+        legend=dict(x=0.5, y=1.1, orientation="h")
     )
-    fig.update_xaxes(type="category", tickformat="%b-%Y", title_text=f"{granularité}")
+    fig.update_xaxes(type="category"    , title_text=f"{granularité}")
     fig.update_yaxes(title_text="CA en k€")
     fig.update_traces(textposition="auto")
+    
 
-    st.plotly_chart(fig)
+    st.plotly_chart(fig, use_container_width=True)
