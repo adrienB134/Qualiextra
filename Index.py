@@ -39,24 +39,6 @@ if __name__ == "__main__":
         data["Semaine"] = data["date_fin"].dt.to_period("W-Mon").astype(str)
         data["marge"] = data.apply(lambda x: x["total HT"] - x["montant HT"], axis=1)
         data["mois"] = data["date_fin"].dt.strftime("%B")
-        data["mois"] = pd.Categorical(
-            data["mois"],
-            categories=[
-                "January",
-                "February",
-                "March",
-                "April",
-                "May",
-                "June",
-                "July",
-                "August",
-                "September",
-                "October",
-                "November",
-                "December",
-            ],
-            ordered=True,
-        )
         data["Jour"] = data["date_fin"].dt.to_period("D").astype(str)
 
         return data
