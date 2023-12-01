@@ -21,7 +21,7 @@ if __name__ == "__main__":
             axis=1,
         )["Propriété"]
         data["Propriété_clean"] = data["hôtel"].apply(lambda x: x.split(" (")[0])
-
+        data["extra_clean"] = data["extra"].apply(lambda x: x.split(" (")[0])
         return data
 
 
