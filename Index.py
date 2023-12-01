@@ -1,12 +1,14 @@
 import streamlit as st
 import pandas as pd
 from geopy.geocoders import BANFrance
-import plotly_express as px
+import plotly.express as px
+
 
 if __name__ == "__main__":
     st.set_page_config(
         page_title="Hello",
         page_icon="👋",
+        layout="wide",
     )
 
     @st.cache_data
@@ -14,21 +16,12 @@ if __name__ == "__main__":
         data = pd.read_csv("./Missions.csv", sep=";")
         mask = data["hôtel"].notna()
         data = data[mask]
-        data["date_debut"] = data.apply(lambda x: x["date"].split(" →")[0], axis=1)
-        data["date_debut"] = data["date_debut"].apply(
-            lambda x: x.replace(" (UTC+3)", "")
-        )
-        data["date_debut"] = data["date_debut"].apply(lambda x: x.replace(" (UTC)", ""))
-        data["date_debut"] = pd.to_datetime(data["date_debut"], format="%d/%m/%Y %H:%M")
-        data["time_delta"] = data["nbre d'heures"].apply(lambda x: pd.to_timedelta(x))
-        data["date_fin"] = data.apply(
-            lambda x: x["date_debut"] + x["time_delta"], axis=1
-        )
         data["Propriété"] = data.apply(
             lambda x: x["hôtel"].split(" (")[0] if "www" in x["Propriété"] else x,
             axis=1,
         )["Propriété"]
         data["Propriété_clean"] = data["hôtel"].apply(lambda x: x.split(" (")[0])
+
         data["extra_clean"] = data["extra"].apply(lambda x: x.split(" (")[0])
         data["periode_debut"] = data["date_debut"].dt.strftime("%m-%Y")
         data["periode_fin"] = data["date_fin"].dt.strftime("%m-%Y")
@@ -81,14 +74,17 @@ def geolocation(data):
     hotel["longitude"] = hotel["location"].apply(
         lambda loc: tuple(loc.point)[1] if loc else None
     )
-    # hotel["total_extras"] = (
-    #     data.groupby("Propriété_clean")["extra_clean"].unique().apply(lambda x: len(x))
-    # )
+    hotel = pd.merge(
+        hotel,
+        data.groupby("Propriété_clean")["extra_clean"].count().to_frame(),
+        left_on="nom",
+        right_on="Propriété_clean",
+    )
+    hotel = hotel.rename(columns={"extra_clean": "Nombre de missions"})
     return hotel
 
 
-st.session_state.data = load_data()
-data = st.session_state.data
+data = load_data()
 
 hotel = geolocation(data)
 st.write("# Welcome to Qualiextra! 👋")
@@ -98,12 +94,13 @@ fig = px.scatter_mapbox(
     lat="latitude",
     lon="longitude",
     mapbox_style="carto-positron",
-    zoom=10,
+    zoom=11,
     hover_name="nom",
     hover_data=["Adresse"],
-    # size=data["hôtel"].value_counts(),
+    height=800,
+    size="Nombre de missions",
 )
 
 fig.update_layout(mapbox=dict())
 
-st.plotly_chart(fig)
+st.plotly_chart(fig, use_container_width=True)

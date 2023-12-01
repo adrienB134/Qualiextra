@@ -171,3 +171,6 @@ cython_debug/
 
 #csv file
 *.csv
+
+#PyTorch logs
+lightning_logs/

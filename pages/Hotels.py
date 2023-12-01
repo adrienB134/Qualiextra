@@ -29,13 +29,14 @@ def load_data():
     data["Semaine"] = data["date_fin"].dt.to_period("W-Mon").astype(str)
     data["marge"] = data.apply(lambda x: x["total HT"] - x["montant HT"], axis=1)
     data["mois"] = data["date_fin"].dt.strftime("%m")
+    data["Jour"] = data["date_fin"].dt.to_period("D").astype(str)
     data["statuts"] = data["statuts"].fillna("standard")
 
     return data
 
 
 # Config
-st.set_page_config(page_title="Qualiextra", page_icon="🏝️", layout="wide")
+st.set_page_config(page_title="Qualiextra", page_icon="🏨", layout="wide")
 
 # Load data
 data = load_data()
