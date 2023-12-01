@@ -4,6 +4,10 @@ COPY . /app/
 
 COPY requirements.txt .
 
+COPY Missions.csv .
+
+EXPOSE 8501
+
 RUN pip install -r requirements.txt
 
-ENTRYPOINT  ["streamlit", "run", "app/Index.py", "--server.port=4000", "--server.address=0.0.0.0"]
+ENTRYPOINT ["streamlit", "run", "app/Index.py", "--server.port=8501", "--server.address=0.0.0.0"]
