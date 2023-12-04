@@ -128,7 +128,7 @@ month = st.selectbox(
     "Choisissez un mois",
     [
         "Tous mois confondus",
-        *data.loc[data["date_debut"].dt.year.astype(str) == year, "date_debut"]
+        data.loc[data["date_debut"].dt.year.astype(str) == year, "date_debut"]
         .dt.strftime("%m")
         .unique(),
     ],

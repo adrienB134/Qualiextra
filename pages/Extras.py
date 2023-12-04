@@ -34,18 +34,18 @@ def load_data():
     data["mois"] = pd.Categorical(
             data["mois"],
             categories=[
-                "January",
-                "February",
-                "March",
-                "April",
-                "May",
-                "June",
-                "July",
-                "August",
-                "September",
-                "October",
-                "November",
-                "December",
+                "janvier",
+                "février",
+                "mars",
+                "avril",
+                "mai",
+                "juin",
+                "juillet",
+                "août",
+                "septembre",
+                "octobre",
+                "novembre",
+                "décembre",
             ],
             ordered=True,
         )
@@ -63,15 +63,16 @@ st.header("Classements des extras sur la totalité de la période")
 
 ##Main
 col1, col2 = st.columns(2)
-top = col1.text_input("Nombre de rangs a afficher", 5)
-timeframe = col1.radio("Timeframe", ["Année", "Mois", "Semaine"], horizontal=True)
-option = col2.selectbox("Période", (data[timeframe].unique()))
-ca_missions = col2.radio(
-    "Classement", ["Chiffre d'affaire", "Missions"], horizontal=True
+ca_missions = col1.radio(
+    "Classement", ["Chiffre d'affaires", "Nombre de missions"], horizontal=True
 )
+top = col1.text_input("Nombre de rangs a afficher", 5)
+timeframe = col2.radio("Granularité", ["Année", "Mois", "Semaine"], horizontal=True)
+option = col2.selectbox("Période", (data[timeframe].unique()))
+
 df = data[data[timeframe] == option]
 
-if ca_missions == "Missions":
+if ca_missions == "Nombre de missions":
     df = (
         df.groupby("extra_clean")
         .count()
@@ -101,7 +102,7 @@ data2 = data.groupby(["mois", "Année"])["extra_clean"].nunique().reset_index()
 mask = data2["extra_clean"] != 0
 data2 = data2[mask]
 
-st.header("Nombre d'extras par mois")
+st.header("Nombre d'extras uniques par mois")
 
 fig = px.line(
     data2,
