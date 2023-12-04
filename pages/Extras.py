@@ -15,18 +15,18 @@ if my_file.is_file():
     data["mois"] = pd.Categorical(
         data["mois"],
         categories=[
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December",
+            "janvier",
+            "février",
+            "mars",
+            "avril",
+            "mai",
+            "juin",
+            "juillet",
+            "août",
+            "septembre",
+            "octobre",
+            "novembre",
+            "décembre",
         ],
         ordered=True,
     )
@@ -37,12 +37,14 @@ if my_file.is_file():
 
     ##Main
     col1, col2 = st.columns(2)
-    top = col1.text_input("Nombre de rangs a afficher", 5)
-    timeframe = col1.radio("Timeframe", ["Année", "Mois", "Semaine"], horizontal=True)
-    option = col2.selectbox("Période", (data[timeframe].unique()))
-    ca_missions = col2.radio(
-        "Classement", ["Chiffre d'affaire", "Missions"], horizontal=True
+    
+    ca_missions = col1.radio(
+        "Classement", ["Chiffre d'affaires", "Nombre de Missions"], horizontal=True
     )
+    top = col1.text_input("Nombre de rangs a afficher", 5)
+    timeframe = col2.radio("Granularité", ["Année", "Mois", "Semaine"], horizontal=True)
+    option = col2.selectbox("Période", (data[timeframe].unique()))
+   
     df = data[data[timeframe] == option]
 
     if ca_missions == "Missions":
@@ -73,7 +75,7 @@ if my_file.is_file():
     mask = data2["extra_clean"] != 0
     data2 = data2[mask]
 
-    st.header("Nombre d'extras par mois")
+    st.header("Nombre d'extras uniques par mois")
 
     fig = px.line(
         data2,
@@ -82,7 +84,7 @@ if my_file.is_file():
         color="Année",
         text=data2["extra_clean"],
         labels={"extra_clean": "Nombre d'extras uniques", "mois": "Mois"},
-        title=f"Nombre d'extras par mois",
+        title=f"Nombre d'extras uniques par mois",
     )
 
     fig.update_layout(xaxis_title="Mois", yaxis_title="Nombre d'extras uniques")
