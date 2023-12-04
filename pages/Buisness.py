@@ -6,12 +6,14 @@ import numpy as np
 import datetime
 import calendar
 from pathlib import Path
+import locale
 
 
 st.set_page_config(page_title="Qualiextra", page_icon="💸", layout="wide")
 
 my_file = Path("missions_processed.csv")
 if my_file.is_file():
+    locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")
     data = pd.read_csv("missions_processed.csv")
     data["date_debut"] = pd.to_datetime(data["date_debut"])
     data["date_fin"] = pd.to_datetime(data["date_fin"])
@@ -19,18 +21,18 @@ if my_file.is_file():
     data["mois"] = pd.Categorical(
         data["mois"],
         categories=[
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December",
+            "janvier",
+            "février",
+            "mars",
+            "avril",
+            "mai",
+            "juin",
+            "juillet",
+            "août",
+            "septembre",
+            "octobre",
+            "novembre",
+            "décembre",
         ],
         ordered=True,
     )
@@ -40,62 +42,88 @@ if my_file.is_file():
     def format_currency(value):
         return f"{value:,} €"
 
-    # Création des variables de mois
-    mois_auj = datetime.datetime.now().strftime("%Y-%m")
-    mois_auj_clean = datetime.datetime.now().strftime("%B %Y")
-    mois_année_précédente = (
-        datetime.datetime.now()
-        .replace(year=datetime.datetime.now().year - 1)
+    # Création des variables necessaires pour affficher les métrics
+    aujd = datetime.datetime.now()
+    mois_auj = aujd.strftime("%Y-%m")
+    premier_jour_du_mois =  aujd.replace(day=1).strftime("%Y-%m-%d")
+    mois_précédent = (
+        aujd.now()
+        .replace(month=aujd.month - 1)
         .strftime("%Y-%m")
     )
-    mois_année_précédente_clean = (
-        datetime.datetime.now()
-        .replace(year=datetime.datetime.now().year - 1)
+    mois_auj_clean = aujd.strftime("%B %Y") #utile pour un affiche en format nom du mois année
+    mois_année_précédente = (
+        aujd
+        .replace(year=aujd.year - 1)
+        .strftime("%Y-%m")
+    )
+    mois_année_précédente_clean = ( #utile pour un affiche en format nom du mois année
+        aujd
+        .replace(year=aujd.year - 1)
         .strftime("%B %Y")
     )
+
+    #calcul du CA et de la marge en comparaison avec l'année précédente à la même période
     ca_auj = sum(data[data["Mois"] == mois_auj]["total HT"])
     ca_année_précédente = sum(data[data["Mois"] == mois_année_précédente]["total HT"])
+
     marge_auj = sum(data[data["Mois"] == mois_auj]["marge"])
     marge_année_précédente = sum(data[data["Mois"] == mois_année_précédente]["marge"])
 
+
+    #Mise en place du calcul du flus de trésorerie 
+    mask = (data['Jour']<=  aujd.strftime("%Y-%m-%d")) & (data['Jour']>= premier_jour_du_mois)
+    data_month_to_date  = data[mask]
+
     st.header("Analyse du chiffre d'affaires")
 
-    col1, col2, col3 = st.columns(3)
+    # Affichage des métrics
+    col1, col2, col3, col4 = st.columns(4)
+
     col1.metric(
-        f"Chiffre d'affaires prévisionnel à fin {mois_auj_clean}",
-        f"{ca_auj: ,} €",
-        f"{round(((ca_auj/ca_année_précédente-1)*100),2)}% par rapport à {mois_année_précédente_clean}",
+        f"Trésorerie décaissée au {aujd.strftime('%d-%m-%Y')}",
+        f"{sum(data_month_to_date['montant HT']): ,} €"
+
     )
     col2.metric(
-        f"Marge prévisionnelle à fin {mois_auj_clean}",
-        f"{marge_auj: ,} €",
-        f"{round(((marge_auj/marge_année_précédente-1)*100),2)}% par rapport à {mois_année_précédente_clean}",
+        f"CA à fin {mois_auj_clean}",
+        f"{ca_auj: ,} €",
+        f"{round(((ca_auj/ca_année_précédente)*100),0)}% de {mois_année_précédente_clean}",
     )
     col3.metric(
-        "Pipeline de Chiffre d'affaires",
-        f"{sum(data[data['Mois']>mois_auj]['total HT']): ,} €",
-        f"Jusqu'à {max(data['date_fin']).strftime('%B %Y')}",
+        f"Marge à fin {mois_auj_clean}",
+        f"{marge_auj: ,} €",
+        f"{round(((marge_auj/marge_année_précédente)*100),0)}% de {mois_année_précédente_clean}",
+    )
+    col4.metric(
+        f"CA signé à {max(data['date_fin']).strftime('%B %Y')}",
+        f"{sum(data[data['Jour']>aujd.strftime('%Y-%m-%d')]['total HT']): ,} €",
+
     )
 
     # Création du graphique en ligne pour chaque année
-    data2 = data.groupby(["mois", "Année"])["total HT"].sum().reset_index()
-    mask = data2["total HT"] != 0
-    data2 = data2[mask]
+    data_grouby_CA = data.groupby(["mois","Mois", "Année"])["total HT"].sum().reset_index()
+    mask = data_grouby_CA["total HT"] != 0
+    data_grouby_CA = data_grouby_CA[mask]
+    data_grouby_CA ['line_style'] = 'solid'
+    data_grouby_CA.loc[data_grouby_CA['Mois'] >= mois_précédent, 'line_style'] = 'dash'
 
     fig = px.line(
-        data2,
+        data_grouby_CA,
         x="mois",
         y="total HT",
         color="Année",
-        text=data2["total HT"].map(format_currency),
+        line_dash="line_style",  
+        text=data_grouby_CA["total HT"].map(format_currency),
         labels={"total HT": "CA", "mois": "Mois"},
-        title=f"Évolution du chiffre d'affaires par mois",
-    )
+        title="Évolution du chiffre d'affaires par mois",
+        )
+
 
     # Mise en forme du graphique
     fig.update_traces(textposition="bottom center")
     fig.update_xaxes(type="category")
-    fig.update_yaxes(title_text="Marge en k€")
+    fig.update_yaxes(title_text="CA en k€")
 
     st.plotly_chart(fig, use_container_width=True)
 
@@ -135,8 +163,8 @@ if my_file.is_file():
         elif periode == "N-1":
             data = data[
                 data["Année"]
-                == datetime.datetime.now()
-                .replace(year=datetime.datetime.now().year - 1)
+                == aujd
+                .replace(year=aujd.year - 1)
                 .strftime("%Y")
             ]
             data_filtre = data.groupby([granularité])[marge_ou_ca].sum().reset_index()
@@ -154,8 +182,8 @@ if my_file.is_file():
                 (data["Mois"] <= mois_auj)
                 & (
                     data["Mois"]
-                    > datetime.datetime.now()
-                    .replace(month=datetime.datetime.now().month - 6)
+                    > aujd
+                    .replace(month=aujd.month - 6)
                     .strftime("%Y-%m")
                 )
             ]
@@ -171,7 +199,7 @@ if my_file.is_file():
 
         elif periode == "YTD":
             data = data[
-                (data["Année"].astype(str) >= datetime.datetime.now().strftime("%Y"))
+                (data["Année"].astype(str) >= aujd.strftime("%Y"))
                 & (data["Mois"] <= mois_auj)
             ]
             data_filtre = data.groupby([granularité])[marge_ou_ca].sum().reset_index()
