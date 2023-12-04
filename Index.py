@@ -3,7 +3,7 @@ import pandas as pd
 from geopy.geocoders import BANFrance
 import plotly.express as px
 from pathlib import Path
-import preprocess
+import utils.preprocess as preprocess
 
 
 def geolocation(data):
