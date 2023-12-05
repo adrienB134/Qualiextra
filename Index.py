@@ -42,12 +42,13 @@ if __name__ == "__main__":
 
     upload = st.file_uploader("Déposer votre csv issu de notion")
     my_file = Path("./missions_processed.csv")
+
     if upload != None:
         preprocess.load_data(upload)
+        st.session_state.data_geo = pd.read_csv("missions_processed.csv")
 
-        data = pd.read_csv("missions_processed.csv")
-
-        hotel = geolocation(data)
+    if my_file.is_file():
+        hotel = geolocation(st.session_state.data_geo)
         st.write("# Welcome to Qualiextra! 👋")
 
         fig = px.scatter_mapbox(
@@ -61,8 +62,6 @@ if __name__ == "__main__":
             height=800,
             size="Nombre de missions",
         )
-
-        fig.update_layout(mapbox=dict())
 
         st.plotly_chart(fig, use_container_width=True)
 
