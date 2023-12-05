@@ -17,7 +17,7 @@ st.set_page_config(page_title="Qualiextra", page_icon="💸", layout="wide")
 
 my_file = Path("missions_processed.csv")
 if my_file.is_file():
-    # locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")
+    locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")
     data = pd.read_csv("missions_processed.csv")
     data["date_debut"] = pd.to_datetime(data["date_debut"])
     data["date_fin"] = pd.to_datetime(data["date_fin"])

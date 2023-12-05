@@ -66,7 +66,7 @@ if __name__ == "__main__":
         if hotel_file.is_file():
             hotel_data = load_csv("./hotels.csv", sep=";")
             hotel = geolocation(data, hotel_data)
-            st.empty()
+
             st.write("# Welcome to Qualiextra! 👋")
 
             fig = px.scatter_mapbox(
