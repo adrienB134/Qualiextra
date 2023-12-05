@@ -7,7 +7,7 @@ import locale
 from pathlib import Path
 
 # Config
-st.set_page_config(page_title="Qualiextra", page_icon="🏨", layout="wide")
+st.set_page_config(page_title="Hôtels", page_icon="🏨", layout="wide")
 
 my_file = Path("missions_processed.csv")
 if my_file.is_file():
