@@ -47,7 +47,7 @@ if my_file.is_file():
     aujd = datetime.datetime.now()
     mois_auj = aujd.strftime("%Y-%m")
     premier_jour_du_mois = aujd.replace(day=1).strftime("%Y-%m-%d")
-    mois_précédent = aujd.now().replace(month=aujd.month - 1).strftime("%Y-%m")
+    mois_précédent = aujd.replace(month=aujd.month - 1).strftime("%Y-%m")
     mois_auj_clean = aujd.strftime(
         "%B %Y"
     )  # utile pour un affiche en format nom du mois année
@@ -70,6 +70,7 @@ if my_file.is_file():
     data_month_to_date = data[mask]
 
     st.header("Analyse du chiffre d'affaires")
+    st.markdown("---")
 
     # Affichage des métrics
     col1, col2, col3, col4 = st.columns(4)
@@ -153,6 +154,7 @@ if my_file.is_file():
     # Création d'un graphique pour le chiffre d'affaires et la marge selon une période indiquée
 
     st.header("Analyse du chiffre d'affaires et de la marge par période")
+    st.markdown("---")
 
     periode = st.selectbox(
         "Sélectionnez la période",
@@ -183,10 +185,9 @@ if my_file.is_file():
                 labels={marge_ou_ca: marge_ou_ca_clean},
                 title=f"Évolution du {marge_ou_ca_clean} - {periode}",
             )
+
         elif periode == "N-1":
-            data = data[
-                data["Année"] == aujd.replace(year=aujd.year - 1).strftime("%Y")
-            ]
+            data = data[(data["Année"] == aujd.replace(year=aujd.year - 1).strftime("%Y"))]
             data_filtre = data.groupby([granularité])[marge_ou_ca].sum().reset_index()
             fig = px.line(
                 data_filtre,
