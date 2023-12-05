@@ -174,3 +174,7 @@ cython_debug/
 
 #PyTorch logs
 lightning_logs/
+models/
+
+#Notebook
+notebooks/
