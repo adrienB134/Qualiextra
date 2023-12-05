@@ -40,7 +40,7 @@ def geolocation(data, hotel_data):
 
 if __name__ == "__main__":
     st.set_page_config(
-        page_title="Hello",
+        page_title="Qualiextra",
         page_icon="👋",
         layout="wide",
     )

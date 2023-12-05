@@ -9,7 +9,7 @@ from pathlib import Path
 import locale
 
 
-st.set_page_config(page_title="Qualiextra", page_icon="💸", layout="wide")
+st.set_page_config(page_title="Buisness", page_icon="💸", layout="wide")
 
 my_file = Path("missions_processed.csv")
 if my_file.is_file():
