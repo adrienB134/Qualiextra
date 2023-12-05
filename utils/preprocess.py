@@ -40,5 +40,5 @@ def load_data(df):
 
     ## Write csv
     my_file = Path("./missions_processed.csv")
-    if not my_file.is_file():
-        data.to_csv("missions_processed.csv")
+
+    data.to_csv("missions_processed.csv")
