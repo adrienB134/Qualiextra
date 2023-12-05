@@ -4,7 +4,7 @@ from geopy.geocoders import BANFrance
 import plotly.express as px
 from pathlib import Path
 import utils.preprocess as preprocess
-
+import datetime
 
 @st.cache_data
 def load_csv(file, sep=","):
@@ -54,7 +54,7 @@ if __name__ == "__main__":
     if my_file.is_file():
         data = load_csv("./missions_processed.csv")
         hôtel_upload = st.file_uploader(
-            "Vous pouver actualiser la carte en déposant \
+            "Vous pouvez actualiser la carte en déposant \
                 un nouveau csv avec les adresses des hôtels"
         )
         hotel_file = Path("./hotels.csv")
@@ -67,6 +67,38 @@ if __name__ == "__main__":
             hotel_data = load_csv("./hotels.csv", sep=";")
             hotel = geolocation(data, hotel_data)
             st.write("# Welcome to Qualiextra! 👋")
+            st.markdown("---")
+
+            col1, col2, col3 = st.columns(3)
+            # Création des variables necessaires pour affficher les métrics
+            aujd = datetime.datetime.now()
+            mois_précédent = aujd.replace(month=aujd.month - 1).strftime("%Y-%m")
+            mois_précédent_clean = aujd.replace(month=aujd.month - 1).strftime("%B %Y")  
+            mois_année_précédente = (aujd.replace(month=aujd.month - 1)
+                                     .replace(year=aujd.year - 1).strftime("%Y-%m"))
+            mois_année_précédente_clean = (aujd.replace(month=aujd.month - 1)
+                                     .replace(year=aujd.year - 1).strftime("%B %Y"))
+            data_mois_prec = data[data["Mois"]== mois_précédent] 
+
+            col1.metric(
+                f"🏨 Hôtel du mois ({mois_précédent_clean})",
+                f"{data_mois_prec.groupby('Propriété')['total HT'].sum().idxmax()}",
+                )
+            col1.markdown(f"<div style='margin-top: -18px; color: green;'> Pour un CA total de {max(data_mois_prec.groupby(['Propriété'])['total HT'].sum()): ,} € </div>", unsafe_allow_html=True)
+
+            col2.metric(
+                f"🧑 Extra du mois ({mois_précédent_clean})",
+                f"{data_mois_prec.groupby('extra_clean')['total HT'].sum().idxmax()}"
+                )
+            col2.markdown(f"<div style='margin-top: -18px; color: green;'> Pour un CA total de {max(data_mois_prec.groupby('extra_clean')['total HT'].sum()): ,} € </div>", unsafe_allow_html=True)
+
+            ca_mois_précédent = sum(data[data["Mois"] == mois_précédent]["total HT"])
+            ca_année_précédente = sum(data[data["Mois"] == mois_année_précédente]["total HT"])
+            col3.metric(
+                f"💸 CA à fin {mois_précédent_clean}",
+                f"{ca_mois_précédent: ,} €",
+            )
+            col3.markdown(f"<div style='margin-top: -18px; color: green;'> + {round(((ca_mois_précédent/ca_année_précédente)*100),0)}% vs. {mois_année_précédente_clean} </div>", unsafe_allow_html=True)
 
             fig = px.scatter_mapbox(
                 hotel,

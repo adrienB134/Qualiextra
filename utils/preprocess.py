@@ -21,6 +21,28 @@ def load_data(df):
     data["marge"] = data.apply(lambda x: x["total HT"] - x["montant HT"], axis=1)
     data["Jour"] = data["date_fin"].dt.to_period("D").astype(str)
     data["statuts"] = data["statuts"].fillna("standard")
+    data["date_fin"] = pd.to_datetime(data["date_fin"])
+    data["mois"] = data["date_fin"].dt.strftime("%B")
+    data["mois"] = pd.Categorical(
+        data["mois"],
+        categories=[
+            "janvier",
+            "février",
+            "mars",
+            "avril",
+            "mai",
+            "juin",
+            "juillet",
+            "août",
+            "septembre",
+            "octobre",
+            "novembre",
+            "décembre",
+        ],
+        ordered=True,
+    )
+
+
     ## Commenter les lignes ci dessous pour ne pas anonymiser
     an = anonymize(data)
     an.fake_names("extra_clean")
