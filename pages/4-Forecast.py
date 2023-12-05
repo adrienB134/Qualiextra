@@ -40,9 +40,9 @@ def forecasting(data):
     data_ts["residual"] = data_ts["y"] - data_ts["TES"]
 
     Y1 = data_ts[["ds", "y"]]
-    Y1["unique_id"] = "Prédiction"
+    Y1["unique_id"] = "pred"
     Y3 = data_ts[["ds", "TES"]].rename(columns={"TES": "y"})
-    Y3["unique_id"] = "Prédiction_TES"
+    Y3["unique_id"] = "pred_TES"
     Y4 = data_ts[["ds", "max"]].rename(columns={"max": "y"})
     Y4["unique_id"] = "max"
     Y5 = data_ts[["ds", "min"]].rename(columns={"min": "y"})
@@ -91,12 +91,10 @@ if my_file.is_file():
     st.title(" 📈 Prédiction du nombre d'extras pour les prochain mois")
     plot_df = forecasting(data)
 
-    plot_df["Prédiction_smooth"] = round(
-        plot_df["Prédiction_TES"].rolling(window=7).max()
-    )
-    plot_df["max_smooth"] = round(plot_df["max"].rolling(window=7).max())
-    plot_df["min_smooth"] = round(plot_df["min"].rolling(window=7).min())
-    plot_df["réel_smooth"] = round(plot_df["réel"].rolling(window=7).mean())
+    plot_df["pred_lissé"] = round(plot_df["pred_TES"].rolling(window=7).max())
+    plot_df["max_lissé"] = round(plot_df["max"].rolling(window=7).max())
+    plot_df["min_lissé"] = round(plot_df["min"].rolling(window=7).min())
+    plot_df["réel_lissé"] = round(plot_df["réel"].rolling(window=7).mean())
 
     plot = go.Figure()
     for column in plot_df.columns:
@@ -110,29 +108,53 @@ if my_file.is_file():
         )
     plot.for_each_trace(
         lambda trace: trace.update(visible=True)
-        if trace.name == "réel_smooth"
-        or trace.name == "Prédiction_smooth"
-        or trace.name == "max_smooth"
-        or trace.name == "min_smooth"
+        if trace.name == "réel_lissé"
+        or trace.name == "pred_lissé"
+        or trace.name == "max_lissé"
+        or trace.name == "min_lissé"
         or trace.name == "réel"
-        or trace.name == "Prédiction"
+        or trace.name == "pred"
         else (),
     )
     plot.for_each_trace(
         lambda trace: trace.update({"line": {"color": "indianred"}})
-        if trace.name == "Prédiction_smooth"
-        or trace.name == "max_smooth"
-        or trace.name == "min_smooth"
+        if trace.name == "pred_lissé"
+        or trace.name == "max_lissé"
+        or trace.name == "min_lissé"
         else (),
     )
     plot.for_each_trace(
         lambda trace: trace.update(opacity=0.5)
-        if trace.name == "max_smooth" or trace.name == "min_smooth"
+        if trace.name == "max_lissé" or trace.name == "min_lissé"
         else (),
     )
-    plot.update_layout(height=700)
+    plot.update_traces(hovertemplate=None)
+    plot.update_layout(
+        height=700,
+        hovermode="x unified",
+        xaxis=dict(
+            rangeselector=dict(
+                buttons=list(
+                    [
+                        dict(
+                            count=4, label="4 mois", step="month", stepmode="backward"
+                        ),
+                        dict(
+                            count=6, label="6 mois", step="month", stepmode="backward"
+                        ),
+                        dict(count=1, label="1 an", step="year", stepmode="backward"),
+                        dict(label="tout", step="all"),
+                    ]
+                )
+            ),
+            rangeslider=dict(visible=True),
+            type="date",
+        ),
+    )
+    plot.update_xaxes(title_text="Date")
+    plot.update_yaxes(title_text="Nombre d'extras uniques")
     st.plotly_chart(plot, use_container_width=True)
-    st.dataframe(plot_df)
+
 
 else:
     st.warning("Merci de bien vouloir charger des données !")
