@@ -9,7 +9,11 @@ from pathlib import Path
 import locale
 
 
-st.set_page_config(page_title="Buisness", page_icon="💸", layout="wide")
+def format_currency(value):
+    return f"{value:,} €"
+
+
+st.set_page_config(page_title="Qualiextra", page_icon="💸", layout="wide")
 
 my_file = Path("missions_processed.csv")
 if my_file.is_file():
@@ -38,9 +42,6 @@ if my_file.is_file():
     )
 
     data = data[data["statuts"] != "annulé"]
-
-    def format_currency(value):
-        return f"{value:,} €"
 
     # Création des variables necessaires pour affficher les métrics
     aujd = datetime.datetime.now()
@@ -98,21 +99,51 @@ if my_file.is_file():
     )
     mask = data_grouby_CA["total HT"] != 0
     data_grouby_CA = data_grouby_CA[mask]
-    data_grouby_CA["line_style"] = "solid"
-    data_grouby_CA.loc[data_grouby_CA["Mois"] >= mois_précédent, "line_style"] = "dash"
+    annees = data_grouby_CA["Année"].unique()
+
+    couleur_dict = {}
+    for i, annee in enumerate(annees):
+        couleur = px.colors.qualitative.Set1[i]
+        couleur_dict.update({annee: couleur})
+
+    mask = data_grouby_CA["Mois"] <= mois_précédent
+    annees_prec = data_grouby_CA[mask]["Année"].unique()
+    couleurs_annees_prec = [
+        couleur_dict.get(annee, "valeur_par_défaut") for annee in annees_prec
+    ]
 
     fig = px.line(
-        data_grouby_CA,
+        data_grouby_CA[mask],
         x="mois",
         y="total HT",
+        text=data_grouby_CA[mask]["total HT"].map(format_currency),
         color="Année",
-        line_dash="line_style",
-        text=data_grouby_CA["total HT"].map(format_currency),
         labels={"total HT": "CA", "mois": "Mois"},
         title="Évolution du chiffre d'affaires par mois",
+        color_discrete_sequence=couleurs_annees_prec,
     )
 
-    # Mise en forme du graphique
+    fig.update_layout(
+        legend=dict(traceorder="reversed"),
+    )
+
+    for i, annee in enumerate(annees):
+        mask = (data_grouby_CA["Mois"] >= mois_précédent) & (
+            data_grouby_CA["Année"] == annee
+        )
+        color = couleur_dict[annee]
+        fig.add_trace(
+            go.Scatter(
+                name=f"En cours pour {annee}",
+                x=data_grouby_CA[mask]["mois"],
+                y=data_grouby_CA[mask]["total HT"],
+                mode="lines+markers+text",
+                line=dict(color=color, width=2, dash="dash"),
+                text=data_grouby_CA[mask]["total HT"].map(format_currency),
+                textposition="top center",
+            )
+        )
+
     fig.update_traces(textposition="bottom center")
     fig.update_xaxes(type="category")
     fig.update_yaxes(title_text="CA en k€")
