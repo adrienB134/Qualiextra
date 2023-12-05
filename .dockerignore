@@ -1,0 +1,5 @@
+notebooks/
+LICENSE
+README.md
+.qualiextraenv
+*.csv
