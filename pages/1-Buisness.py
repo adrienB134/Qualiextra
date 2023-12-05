@@ -8,6 +8,7 @@ import calendar
 from pathlib import Path
 import locale
 
+
 def format_currency(value):
     return f"{value:,} €"
 
@@ -45,35 +46,28 @@ if my_file.is_file():
     # Création des variables necessaires pour affficher les métrics
     aujd = datetime.datetime.now()
     mois_auj = aujd.strftime("%Y-%m")
-    premier_jour_du_mois =  aujd.replace(day=1).strftime("%Y-%m-%d")
-    mois_précédent = (
-        aujd.now()
-        .replace(month=aujd.month - 1)
-        .strftime("%Y-%m")
-    )
-    mois_auj_clean = aujd.strftime("%B %Y") #utile pour un affiche en format nom du mois année
-    mois_année_précédente = (
-        aujd
-        .replace(year=aujd.year - 1)
-        .strftime("%Y-%m")
-    )
-    mois_année_précédente_clean = ( #utile pour un affiche en format nom du mois année
-        aujd
-        .replace(year=aujd.year - 1)
-        .strftime("%B %Y")
+    premier_jour_du_mois = aujd.replace(day=1).strftime("%Y-%m-%d")
+    mois_précédent = aujd.now().replace(month=aujd.month - 1).strftime("%Y-%m")
+    mois_auj_clean = aujd.strftime(
+        "%B %Y"
+    )  # utile pour un affiche en format nom du mois année
+    mois_année_précédente = aujd.replace(year=aujd.year - 1).strftime("%Y-%m")
+    mois_année_précédente_clean = (  # utile pour un affiche en format nom du mois année
+        aujd.replace(year=aujd.year - 1).strftime("%B %Y")
     )
 
-    #calcul du CA et de la marge en comparaison avec l'année précédente à la même période
+    # calcul du CA et de la marge en comparaison avec l'année précédente à la même période
     ca_auj = sum(data[data["Mois"] == mois_auj]["total HT"])
     ca_année_précédente = sum(data[data["Mois"] == mois_année_précédente]["total HT"])
 
     marge_auj = sum(data[data["Mois"] == mois_auj]["marge"])
     marge_année_précédente = sum(data[data["Mois"] == mois_année_précédente]["marge"])
 
-
-    #Mise en place du calcul du flus de trésorerie 
-    mask = (data['Jour']<=  aujd.strftime("%Y-%m-%d")) & (data['Jour']>= premier_jour_du_mois)
-    data_month_to_date  = data[mask]
+    # Mise en place du calcul du flus de trésorerie
+    mask = (data["Jour"] <= aujd.strftime("%Y-%m-%d")) & (
+        data["Jour"] >= premier_jour_du_mois
+    )
+    data_month_to_date = data[mask]
 
     st.header("Analyse du chiffre d'affaires")
 
@@ -82,8 +76,7 @@ if my_file.is_file():
 
     col1.metric(
         f"Trésorerie décaissée au {aujd.strftime('%d-%m-%Y')}",
-        f"{sum(data_month_to_date['montant HT']): ,} €"
-
+        f"{sum(data_month_to_date['montant HT']): ,} €",
     )
     col2.metric(
         f"CA à fin {mois_auj_clean}",
@@ -98,47 +91,50 @@ if my_file.is_file():
     col4.metric(
         f"CA signé à {max(data['date_fin']).strftime('%B %Y')}",
         f"{sum(data[data['Jour']>aujd.strftime('%Y-%m-%d')]['total HT']): ,} €",
-
     )
 
     # Création du graphique en ligne pour chaque année
-    data_grouby_CA = data.groupby(["mois", "Mois", "Année"])["total HT"].sum().reset_index()
+    data_grouby_CA = (
+        data.groupby(["mois", "Mois", "Année"])["total HT"].sum().reset_index()
+    )
     mask = data_grouby_CA["total HT"] != 0
     data_grouby_CA = data_grouby_CA[mask]
     annees = data_grouby_CA["Année"].unique()
 
-
-    couleur_dict={}
-    for i, annee in enumerate(annees):    
+    couleur_dict = {}
+    for i, annee in enumerate(annees):
         couleur = px.colors.qualitative.Set1[i]
-        couleur_dict.update({annee:couleur})
-
+        couleur_dict.update({annee: couleur})
 
     mask = data_grouby_CA["Mois"] <= mois_précédent
     annees_prec = data_grouby_CA[mask]["Année"].unique()
-    couleurs_annees_prec = [couleur_dict.get(annee, "valeur_par_défaut") for annee in annees_prec]
+    couleurs_annees_prec = [
+        couleur_dict.get(annee, "valeur_par_défaut") for annee in annees_prec
+    ]
 
     fig = px.line(
         data_grouby_CA[mask],
         x="mois",
         y="total HT",
-        text = data_grouby_CA[mask]["total HT"].map(format_currency),
-        color="Année",  
+        text=data_grouby_CA[mask]["total HT"].map(format_currency),
+        color="Année",
         labels={"total HT": "CA", "mois": "Mois"},
         title="Évolution du chiffre d'affaires par mois",
         color_discrete_sequence=couleurs_annees_prec,
     )
 
     fig.update_layout(
-        legend=dict(traceorder='reversed'),
+        legend=dict(traceorder="reversed"),
     )
 
-
     for i, annee in enumerate(annees):
-        mask = (data_grouby_CA["Mois"] >= mois_précédent) & (data_grouby_CA["Année"] == annee)
+        mask = (data_grouby_CA["Mois"] >= mois_précédent) & (
+            data_grouby_CA["Année"] == annee
+        )
         color = couleur_dict[annee]
         fig.add_trace(
-            go.Scatter(name = f"En cours pour {annee}",
+            go.Scatter(
+                name=f"En cours pour {annee}",
                 x=data_grouby_CA[mask]["mois"],
                 y=data_grouby_CA[mask]["total HT"],
                 mode="lines+markers+text",
@@ -148,11 +144,9 @@ if my_file.is_file():
             )
         )
 
-
     fig.update_traces(textposition="bottom center")
     fig.update_xaxes(type="category")
     fig.update_yaxes(title_text="CA en k€")
-
 
     st.plotly_chart(fig, use_container_width=True)
 
@@ -191,10 +185,7 @@ if my_file.is_file():
             )
         elif periode == "N-1":
             data = data[
-                data["Année"]
-                == aujd
-                .replace(year=aujd.year - 1)
-                .strftime("%Y")
+                data["Année"] == aujd.replace(year=aujd.year - 1).strftime("%Y")
             ]
             data_filtre = data.groupby([granularité])[marge_ou_ca].sum().reset_index()
             fig = px.line(
@@ -209,12 +200,7 @@ if my_file.is_file():
         elif periode == "6M":
             data = data[
                 (data["Mois"] <= mois_auj)
-                & (
-                    data["Mois"]
-                    > aujd
-                    .replace(month=aujd.month - 6)
-                    .strftime("%Y-%m")
-                )
+                & (data["Mois"] > aujd.replace(month=aujd.month - 6).strftime("%Y-%m"))
             ]
             data_filtre = data.groupby([granularité])[marge_ou_ca].sum().reset_index()
             fig = px.line(

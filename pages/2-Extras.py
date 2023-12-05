@@ -5,7 +5,7 @@ import numpy as np
 import plotly.express as px
 from pathlib import Path
 
-st.set_page_config(page_title="Qualiextra", page_icon="🧑", layout="wide")
+st.set_page_config(page_title="Extras", page_icon="🧑", layout="wide")
 my_file = Path("missions_processed.csv")
 if my_file.is_file():
     data = pd.read_csv("missions_processed.csv")
@@ -37,14 +37,14 @@ if my_file.is_file():
 
     ##Main
     col1, col2 = st.columns(2)
-    
+
     ca_missions = col1.radio(
         "Classement", ["Chiffre d'affaires", "Nombre de Missions"], horizontal=True
     )
     top = col1.text_input("Nombre de rangs a afficher", 5)
     timeframe = col2.radio("Granularité", ["Année", "Mois", "Semaine"], horizontal=True)
     option = col2.selectbox("Période", (data[timeframe].unique()))
-   
+
     df = data[data[timeframe] == option]
 
     if ca_missions == "Missions":
