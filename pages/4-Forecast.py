@@ -88,7 +88,7 @@ my_file = Path("missions_processed.csv")
 if my_file.is_file():
     data = pd.read_csv("missions_processed.csv")
 
-    st.title(" 📈 Prédiction du nombre d'extras pour les prochain mois")
+    st.title(" 📈 Prédiction du nombre d'extras pour les prochains mois")
     plot_df = forecasting(data)
 
     plot_df["pred_lissé"] = round(plot_df["pred_TES"].rolling(window=7).max())

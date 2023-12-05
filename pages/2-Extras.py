@@ -33,7 +33,8 @@ if my_file.is_file():
 
     data = data[data["statuts"] != "annulé"]
 
-    st.header("Classements des extras sur la totalité de la période")
+    st.header("Classement des extras sur la totalité de la période")
+    st.markdown("---")
 
     ##Main
     col1, col2 = st.columns(2)
@@ -41,7 +42,7 @@ if my_file.is_file():
     ca_missions = col1.radio(
         "Classement", ["Chiffre d'affaires", "Nombre de Missions"], horizontal=True
     )
-    top = col1.text_input("Nombre de rangs a afficher", 5)
+    top = col1.text_input("Nombre de rangs à afficher", 5)
     timeframe = col2.radio("Granularité", ["Année", "Mois", "Semaine"], horizontal=True)
     option = col2.selectbox("Période", (data[timeframe].unique()))
 
@@ -76,6 +77,7 @@ if my_file.is_file():
     data2 = data2[mask]
 
     st.header("Nombre d'extras uniques par mois")
+    st.markdown("---")
 
     fig = px.line(
         data2,
