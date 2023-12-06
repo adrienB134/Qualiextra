@@ -10,7 +10,7 @@ RUN pip install -r requirements.txt
 
 COPY . ./app
 COPY .streamlit/config.toml ./app/.streamlit/config.toml
-
+COPY .streamlit/config.toml ./.streamlit/config.toml
 
 # Set the locale
 RUN apt-get update && apt-get install -y locales \
