@@ -187,7 +187,12 @@ if my_file.is_file():
             )
 
         elif periode == "N-1":
-            data = data[(data["Année"] == aujd.replace(year=aujd.year - 1).strftime("%Y"))]
+            data = data[
+                (
+                    data["Année"].astype(str)
+                    == aujd.replace(year=aujd.year - 1).strftime("%Y")
+                )
+            ]
             data_filtre = data.groupby([granularité])[marge_ou_ca].sum().reset_index()
             fig = px.line(
                 data_filtre,

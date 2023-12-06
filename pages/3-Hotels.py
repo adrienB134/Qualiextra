@@ -117,7 +117,7 @@ if my_file.is_file():
             [
                 "Tous mois confondus",
                 *data.loc[data["date_debut"].dt.year.astype(str) == year, "date_debut"]
-                .dt.strftime("%m")
+                .dt.strftime("%b")
                 .unique(),
             ],
             index=0,
@@ -310,7 +310,7 @@ if my_file.is_file():
         fig.update_xaxes(title_text="Hôtels")
         fig.update_yaxes(title_text="Marge en % de CA")
         fig.update_traces(textposition="outside")
-        fig.update_layout(yaxis_range=[0, max(marge_df["pourcent"]) + 5])
+        fig.update_layout(yaxis_range=[0, max(marge_df["pourcent"]) + 10])
 
         st.plotly_chart(fig, use_container_width=True)
 else:
