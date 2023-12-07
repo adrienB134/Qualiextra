@@ -16,7 +16,6 @@ Dire que ça relève du NDA
 **Conatiner run:**
 To run the app in a container clone the repository in a new directory and run 
 ```
-
 bash build.sh && bash run.sh
 ```
 
@@ -24,7 +23,6 @@ bash build.sh && bash run.sh
 Make sure you have installed all the packages in requirements.txt
 To run the app locally clone the repository in a new directory and run 
 ```
-
 python -m streamlit run --server.port 4000 Index.py
 ```
 
