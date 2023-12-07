@@ -57,5 +57,3 @@ Simon Claude
 Nicolas Leurs
 
 Ce projet a été réalisé dans le cadre de la formation "Data science and engineering Fullstack" de Jedha afin de valider une partie du certificat "Concepteur Développeur en Science des données".
-
-## Licence
