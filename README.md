@@ -35,7 +35,7 @@ Le projet se compose des dossiers suivants :
 ## Usage
 #### L'application streamlit peut être lancée en local ou à l'intérieur d'un conteneur docker
 
-**Conteneur :**
+**Docker :**
 Pour lancer le dashboard dans un conteneur, il suffit de cloner le github dans un nouveau dossier et de lancer la commande suivante :
 ```
 bash build.sh && bash run.sh
