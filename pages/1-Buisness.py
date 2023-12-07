@@ -86,7 +86,7 @@ if my_file.is_file():
     )
     col3.metric(
         f"Marge à fin {mois_auj_clean}",
-        f"{marge_auj: ,} €",
+        f"{marge_auj: ,} € ({int(round((marge_auj/ca_auj)*100,0))}%)",
         f"{round(((marge_auj/marge_année_précédente)*100),0)}% de {mois_année_précédente_clean}",
     )
     col4.metric(
