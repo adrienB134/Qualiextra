@@ -42,7 +42,7 @@ bash build.sh && bash run.sh
 ```
 
 **Local :**
-Pour lancer le dashboard en local, assurez-vous d'installer les paquets nécésaires figurant dans requirements.txt.
+Pour lancer le dashboard en local, assurez-vous d'installer les paquets nécessaires figurant dans requirements.txt.
 Clonez ensuite le github dans un nouveau dossier et de lancer la commande suivante :
 ```
 python -m streamlit run --server.port 4000 Index.py
