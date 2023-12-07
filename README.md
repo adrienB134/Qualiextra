@@ -1,11 +1,11 @@
 # Qualiextra
 
-## Project description
+## Description du projet
 Qualiextra est une société créée en 2021 de mise en relation d'hôtels qui ont un besoin d’extras immédiatement opérationnels et d'extras qui sont à la recherche de missions. Elle prône une approche qualitative avec une démarche simplifiée avec la possibilité de prendre en charge des missions urgentes. 
 
 Ce projet répond aux besoins de cette société qui recherche un outil d'analyse et de prédiction pour le suivi de son activité. 
 
-## Goals
+## Objectifs
 1. Fournir à la société Qualiextra un dahsboard complet présentant les éléments essentiels de son activité avec notamment :
    - évolution du chiffre d'affaires et de la marge
    - suivi de la trésorerie 
@@ -19,7 +19,7 @@ Ces éléments seront regroupés dans une application Streamlit.
 Le dataset fourni présente l'ensemble des missions effectuées par Qualiextra. 
 Ce dataset est confidentiel, un NDA doit être signé pour accéder aux données. 
 
-## Content
+## Contenu
 Le projet se compose des dossiers suivants : 
 1. Un dossier .streamlit permettant de configurer l'application Streamlit
 2. Un dossier pages comprenant l'ensemble des onglets de l'application
@@ -33,27 +33,30 @@ Le projet se compose des dossiers suivants :
 
 
 ## Usage
-#### The application can be run locally or within a docker container 
+#### L'application streamlit peut être lancée en local ou à l'intérieur d'un contenaire docker
 
-**Conatiner run:**
-To run the app in a container clone the repository in a new directory and run 
+**Contenaire:**
+Pour lancer le dashboard dans un contenaire, il suffit de clonner le github dans un nouveau dossier et de lancer la commande suivante :
 ```
 bash build.sh && bash run.sh
 ```
 
 **Local run:**
-Make sure you have installed all the packages in requirements.txt
-To run the app locally clone the repository in a new directory and run 
+Pour lancer le dashboard en local, assurez-vous d'installer les paquets nécésaires figurant dans requirements.txt.
+Clonnez ensuite le github dans un nouveau dossier et de lancer la commande suivante :
 ```
 python -m streamlit run --server.port 4000 Index.py
 ```
 
-## Contributors
+## Contributeurs
 
 Adrien Berthélémé
+
 Simon Claude 
+
 Nicolas Leurs
 
-This project was made as part of the Jedha Bootcamp Data science and engineering Fullstack course and was submitted to validate part of the French certificate "Machine Learning Engineer".
+Ce projet a été réalisé dans le cadre de la formation "Data science and engineering Fullstack" de Jedha afin de valider une partie du certificat "Concepteur Développeur en Science des données"
+This project was made as part of the Jedha Bootcamp  course and was submitted to validate part of the French certificate "Machine Learning Engineer".
 
 ## Licence
