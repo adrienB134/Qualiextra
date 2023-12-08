@@ -45,7 +45,7 @@ if my_file.is_file():
     top = st.text_input("Nombre d'hôtels à afficher", 5)
 
     ca_missions = st.radio(
-        "Classement", ["Chiffre d'affaires", "Nombre de missions"], horizontal=True
+        "Classement", ["Nombre de missions", "Chiffre d'affaires"], horizontal=True
     )
 
     if ca_missions == "Nombre de missions":
