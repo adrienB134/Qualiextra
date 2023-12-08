@@ -55,7 +55,7 @@ bash docker_run.sh
 ```
 
 **Local :**<br>
-Pour installer le dashboard en local, utilisez la commande suivante dasn un terminal et suivez les instructions:
+Pour installer le dashboard en local, utilisez la commande suivante dans un terminal et suivez les instructions:
 ```
 bash local_install.sh
 ```
