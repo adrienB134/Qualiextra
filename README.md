@@ -34,18 +34,34 @@ Le projet se compose des dossiers suivants :
 
 ## Usage
 #### L'application streamlit peut être lancée en local ou à l'intérieur d'un conteneur docker
+Tout d'abord clonez le github dans un nouveau dossier :
+```
+git clone https://github.com/adrienB134/Qualiextra.git
+```
+ou
+```
+gh repo clone adrienB134/Qualiextra
+```
+Puis choisissez l'une des méthodes suivante:
 
-**Docker :**
-Pour lancer le dashboard dans un conteneur, il suffit de cloner le github dans un nouveau dossier et de lancer la commande suivante :
+**Docker :**<br>
+Si nécessaire il est possible de construire l'image à l'aide de la commande suivante.
 ```
-bash build.sh && bash run.sh
+bash docker_build.sh
+```
+Puis pour lancer l'application depuis le conteneur:
+```
+bash docker_run.sh
 ```
 
-**Local :**
-Pour lancer le dashboard en local, assurez-vous d'installer les paquets nécessaires figurant dans requirements.txt.
-Clonez ensuite le github dans un nouveau dossier et de lancer la commande suivante :
+**Local :**<br>
+Pour installer le dashboard en local, utilisez la commande suivante dasn un terminal et suivez les instructions:
 ```
-python -m streamlit run --server.port 4000 Index.py
+bash local_install.sh
+```
+Il sera ensuite possible de lancer l'application avec la commande:
+```
+bash Qualiextra.sh
 ```
 
 ## Contributeurs
