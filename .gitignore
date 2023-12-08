@@ -1,3 +1,7 @@
+#Notebook
+notebooks/
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -178,7 +182,5 @@ cython_debug/
 lightning_logs/
 models/
 
-#Notebook
-notebooks/
-*.ipynb
-notebooks/*.ipynb
+
+!missions_processed.csv
