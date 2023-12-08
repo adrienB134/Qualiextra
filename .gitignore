@@ -181,3 +181,4 @@ models/
 #Notebook
 notebooks/
 *.ipynb
+notebooks/*.ipynb
