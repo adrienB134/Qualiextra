@@ -1,5 +1,6 @@
 #bin/bash
 echo 'Please choose your favorite python environment manager!'
+echo '(In doubt choose venv)'
 echo '1- Conda'
 echo '2- Venv'
 echo 'Enter 1 or 2:'
@@ -20,7 +21,7 @@ then
     source .qualiextra_env/bin/activate
     pip install -r requirements.txt
     echo '#bin/bash 
-    conda activate qualiextra_env
+    source .qualiextra_env/bin/activate
     streamlit run Index.py --server.port=8501 --server.address=0.0.0.0
     ' > Qualiextra.sh
 fi
