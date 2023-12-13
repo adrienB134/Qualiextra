@@ -168,7 +168,7 @@ cython_debug/
 
 #
 .qualiextraenv
-
+.qualiextraenv/
 .DS_Store
 
 
