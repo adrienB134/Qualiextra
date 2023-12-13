@@ -8,8 +8,8 @@ def load_data(df):
     mask = data["hôtel"].notna()
     data = data[mask]
     data["date_debut"] = data.apply(lambda x: x["date"].split(" →")[0], axis=1)
-    data["date_debut"] = data["date_debut"].apply(lambda x: x.replace(" (UTC+3)", ""))
-    data["date_debut"] = data["date_debut"].apply(lambda x: x.replace(" (UTC)", ""))
+    data["date_debut"] = data["date_debut"].apply(lambda x: x.split(" (")[0])
+    # data["date_debut"] = data["date_debut"].apply(lambda x: x.replace(" (UTC)", ""))
     data["date_debut"] = pd.to_datetime(data["date_debut"], format="%d/%m/%Y %H:%M")
     data["time_delta"] = data["nbre d'heures"].apply(lambda x: pd.to_timedelta(x))
     data["date_fin"] = data.apply(lambda x: x["date_debut"] + x["time_delta"], axis=1)
@@ -41,7 +41,6 @@ def load_data(df):
         ],
         ordered=True,
     )
-
 
     ## Commenter les lignes ci dessous pour ne pas anonymiser
     an = anonymize(data)

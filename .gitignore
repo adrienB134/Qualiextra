@@ -183,3 +183,4 @@ lightning_logs/
 models/
 
 
+!missions_processed.csv
