@@ -31,14 +31,14 @@ def geolocation(data, hotel_data):
         lambda loc: tuple(loc.point)[1] if loc else None
     )
 
-    ### Anonymisation
-    hotel["latitude"] = hotel["latitude"].apply(
-        lambda lat: lat + random.uniform(-0.05, 0.05)
-    )
-    hotel["longitude"] = hotel["longitude"].apply(
-        lambda lon: lon + random.uniform(-0.07, 0.07)
-    )
-    ### Fin anonymisation
+    # ### Anonymisation
+    # hotel["latitude"] = hotel["latitude"].apply(
+    #     lambda lat: lat + random.uniform(-0.05, 0.05)
+    # )
+    # hotel["longitude"] = hotel["longitude"].apply(
+    #     lambda lon: lon + random.uniform(-0.07, 0.07)
+    # )
+    # ### Fin anonymisation
 
     hotel = pd.merge(
         hotel,

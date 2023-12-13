@@ -42,22 +42,22 @@ def load_data(df):
         ordered=True,
     )
 
-    ## Commenter les lignes ci dessous pour ne pas anonymiser
-    an = anonymize(data)
-    an.fake_names("extra_clean")
-    an.fake_categories("Propriété")
-    an.fake_whole_numbers("total HT")
-    an.fake_whole_numbers("montant HT")
-    data["total HT"] = data["Fake_total HT"]
-    data["montant HT"] = data["Fake_montant HT"]
-    data["Propriété"] = data["Fake_Propriété"]
-    data["extra_clean"] = data["Fake_extra_clean"]
-    data.drop(
-        ["Fake_Propriété", "Fake_extra_clean", "Fake_total HT", "Fake_montant HT"],
-        axis=1,
-    )
-    data_sample = data.sample(1500)
-    data = pd.concat([data, data_sample])
+    # ## Commenter les lignes ci dessous pour ne pas anonymiser
+    # an = anonymize(data)
+    # an.fake_names("extra_clean")
+    # an.fake_categories("Propriété")
+    # an.fake_whole_numbers("total HT")
+    # an.fake_whole_numbers("montant HT")
+    # data["total HT"] = data["Fake_total HT"]
+    # data["montant HT"] = data["Fake_montant HT"]
+    # data["Propriété"] = data["Fake_Propriété"]
+    # data["extra_clean"] = data["Fake_extra_clean"]
+    # data.drop(
+    #     ["Fake_Propriété", "Fake_extra_clean", "Fake_total HT", "Fake_montant HT"],
+    #     axis=1,
+    # )
+    # data_sample = data.sample(1500)
+    # data = pd.concat([data, data_sample])
 
     ## Write csv
     my_file = Path("./missions_processed.csv")

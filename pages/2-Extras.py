@@ -30,7 +30,7 @@ if my_file.is_file():
             "décembre",
         ],
         ordered=True,
-    )    
+    )
     aujd = datetime.datetime.now()
     mois_auj = aujd.strftime("%Y-%m")
     premier_jour_du_mois = aujd.replace(day=1).strftime("%Y-%m-%d")
@@ -52,7 +52,7 @@ if my_file.is_file():
 
     df = data[data[timeframe] == option]
 
-    if ca_missions == "Missions":
+    if ca_missions == "Nombre de Missions":
         df = (
             df.groupby("extra_clean")
             .count()
@@ -68,7 +68,7 @@ if my_file.is_file():
             df.groupby("extra_clean")
             .sum(numeric_only=True)
             .sort_values(by="total HT", ascending=False)
-            .reset_index()[["extra_clean", "total HT"]]
+            .reset_index()[["extra_clean", "montant HT"]]
         )
         df.index = np.arange(1, len(df) + 1)
         df.index = df.index.rename("Rang")
@@ -76,12 +76,12 @@ if my_file.is_file():
 
     st.dataframe(df.iloc[0 : int(top), :], use_container_width=True)
 
-    #Création du graphique représentant le nb d'extra uniques par mois au cours des années
+    # Création du graphique représentant le nb d'extra uniques par mois au cours des années
     st.header("Nombre d'extras uniques par mois")
     st.markdown("---")
 
     data_grouby_extra = (
-    data.groupby(["mois", "Mois", "Année"])["extra_clean"].nunique().reset_index()
+        data.groupby(["mois", "Mois", "Année"])["extra_clean"].nunique().reset_index()
     )
     mask = data_grouby_extra["extra_clean"] != 0
     data_grouby_extra = data_grouby_extra[mask]
@@ -138,8 +138,3 @@ if my_file.is_file():
 
 else:
     st.warning("Merci de bien vouloir charger des données !")
-
-
-
-
-
